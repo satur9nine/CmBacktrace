@@ -121,6 +121,11 @@
 #define CMB_SYSHND_CTRL                (*(volatile unsigned int*)  (0xE000ED24u))
 #endif
 
+/* configurable fault status register */
+#ifndef CMB_NVIC_CFSR
+#define CMB_NVIC_CFSR                  (*(volatile unsigned int*)  (0xE000ED28u))
+#endif
+
 /* memory management fault status register */
 #ifndef CMB_NVIC_MFSR
 #define CMB_NVIC_MFSR                  (*(volatile unsigned char*) (0xE000ED28u))
@@ -343,9 +348,13 @@ if (!(EXPR))                                                                   \
         #include <os.h>
     #elif (CMB_OS_PLATFORM_TYPE == CMB_OS_PLATFORM_FREERTOS)
         #include <FreeRTOS.h>  
+        #include <task.h>
         extern uint32_t *vTaskStackAddr(void);/* need to modify the FreeRTOS/tasks source code */
         extern uint32_t vTaskStackSize(void);
         extern char * vTaskName(void);
+        extern uint32_t* pvTaskStackStartAddrForTask(TaskHandle_t xTask); // pxStack
+        extern uint32_t xTaskStackSizeForTask(TaskHandle_t xTask); // uxSizeOfStack
+        extern uint32_t *xTaskStackAddrForTask(TaskHandle_t xTask); // pxTopOfStack
     #elif (CMB_OS_PLATFORM_TYPE == CMB_OS_PLATFORM_RTX5)
         #include "rtx_os.h"
     #else
